@@ -1,15 +1,23 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners="banners"/>
-    <home-recommend-view :recommends="recommends"/>
-    <home-feature-view/>
 
-    <tab-control :titles="['流行','新款','精选']"
-                 class="tab-control"
-                 @tabClick="tabClick"/>
-    <good-list :goods="showGoods"/>
+    <scroll class="content"
+            ref="scroll"
+            :probe-type="3"
+            @scroll="contentScroll"
+            :pull-up-load="true"
+            @pullingUp="loadMore">
+      <home-swiper :banners="banners"/>
+      <home-recommend-view :recommends="recommends"/>
+      <home-feature-view/>
 
+      <tab-control :titles="['流行','新款','精选']"
+                   class="tab-control"
+                   @tabClick="tabClick"/>
+      <good-list :goods="showGoods"/>
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -22,6 +30,8 @@ import HomeFeatureView from "./childComps/HomeFeatureView";
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodList from "components/content/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
+import BackTop from "@/components/content/backTop/BackTop";
 
 import {
   getHomeMultidata,
@@ -37,7 +47,9 @@ export default {
 
     NavBar,
     TabControl,
-    GoodList
+    GoodList,
+    Scroll,
+    BackTop
   },
   data(){
     return {
@@ -49,6 +61,7 @@ export default {
         'sell': {page:0, list: []},
       },
       currentType: 'pop',
+      isShowBackTop: false,
     }
   },
   computed: {
@@ -83,7 +96,16 @@ export default {
           this.currentType = 'sell'
       }
     },
-
+    backClick(){
+      // this.$refs.scroll.scroll.scrollTo(0, 0, 500)
+      this.$refs.scroll.scrollTo()
+    },
+    contentScroll(position){
+      this.isShowBackTop = (-position.y) > 700
+    },
+    loadMore(){
+      this.getHomeGoods(this.currentType)
+    },
     /**
      * 网络请求相关方法
      */
@@ -102,6 +124,9 @@ export default {
         this.goods[type].list.push(...res.data.list)
         //页码需要加一
         this.goods[type].page++
+
+        //完成一次上拉加载后必须主动调用一次finishPullUp方法,才能进行下一次
+        this.$refs.scroll.finishPullUp()
       })
     }
   }
@@ -110,7 +135,9 @@ export default {
 
 <style scoped>
   #home {
-    padding-top: 44px;
+    /*padding-top: 44px;*/
+    height: 100vh;
+    position: relative;
   }
   .home-nav{
     background-color: var(--color-tint);
@@ -126,4 +153,20 @@ export default {
     top: 44px;
     z-index: 9;
   }
+
+  .content {
+    overflow: hidden;
+
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
+  }
+  /*.content{*/
+  /*  height: calc(100% - 93px);*/
+  /*  overflow: hidden;*/
+  /*  margin-top: 44px;*/
+  /*}*/
+
 </style>
