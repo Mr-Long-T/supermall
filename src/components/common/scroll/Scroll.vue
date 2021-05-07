@@ -50,12 +50,16 @@ export default {
   methods: {
     //封装scrollTo方法
     scrollTo(x, y, time=500){
-      this.scroll.scrollTo(0, 0, time)
+      //先判断scroll对象为不为null 不为null再执行this.scroll.scrollTo(0, 0, time)
+      this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(0, 0, time)
     },
-
     finishPullUp(){
-      this.scroll.finishPullUp()
+      this.scroll && this.scroll.finishPullUp()
+    },
+    refresh(){
+      this.scroll && this.scroll.refresh()
     }
+
   }
 }
 </script>
