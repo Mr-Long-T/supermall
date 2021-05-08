@@ -7,7 +7,8 @@
     <tab-control :titles="['流行','新款','精选']"
                  class="tab-control"
                  @tabClick="tabClick"
-                 ref="tabControl1" v-show="isTabFixed"/>
+                 ref="tabControl1"
+                 v-show="isTabFixed"/>
 
     <scroll class="content"
             ref="scroll"
@@ -69,6 +70,7 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
+      saveY: 0,
     }
   },
   computed: {
@@ -76,6 +78,17 @@ export default {
       return this.goods[this.currentType].list
     }
   },
+  destroyed() {  //组件销毁时 <keep-alive>可以保持不被销毁
+  },
+  activated() {  //进入组件，跳到离开前的位置
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
+    //回来的时候最好刷新一次，否则会出现滚动到顶部的情况
+    this.$refs.scroll.refresh()
+  },
+  deactivated() { //离开组件时，记录位置
+    this.saveY = this.$refs.scroll.getScrollY()
+  },
+
   //组件创建好了，就赶紧发送网络请求
   created() {
     //1.请求多个数据

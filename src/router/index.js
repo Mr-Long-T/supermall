@@ -25,6 +25,10 @@ const routes = [
     path: '/profile',
     component: () => import('views/profile/Profile')
   },
+  {
+    path: '/detail',
+    component: () => import('views/detail/Detail')
+  },
 ]
 
 export default new VueRouter({

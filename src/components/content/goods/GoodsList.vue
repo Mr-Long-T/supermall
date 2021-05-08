@@ -15,21 +15,21 @@ export default {
   props: {
     goods: {
       type: Array,
-      default(){
+      default() {
         return []
       }
     }
-  }
+  },
 }
 </script>
 
 <style scoped>
-  .goods {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 2px;
-  }
+.goods {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 2px;
+}
 
 
 </style>
