@@ -81,9 +81,9 @@ export default {
   destroyed() {  //组件销毁时 <keep-alive>可以保持不被销毁
   },
   activated() {  //进入组件，跳到离开前的位置
-    this.$refs.scroll.scrollTo(0, this.saveY, 0)
-    //回来的时候最好刷新一次，否则会出现滚动到顶部的情况
+    // 回来的时候最好刷新一次，否则会出现滚动到顶部的情况
     this.$refs.scroll.refresh()
+    this.$refs.scroll.scrollTo(0, this.saveY, 0)
   },
   deactivated() { //离开组件时，记录位置
     this.saveY = this.$refs.scroll.getScrollY()
@@ -100,7 +100,7 @@ export default {
     this.getHomeGoods('sell')
   },
   mounted() {
-    //防抖 (将refresh函数传入到debounce函数中，生成一个新的函数)
+    //防抖 refresh调用太频繁(将refresh函数传入到debounce函数中，生成一个新的函数)
     const refresh = debounce(this.$refs.scroll.refresh, 500)
     //1.监听item中图片加载完成
     this.$bus.$on('itemImageLoad', () => {
@@ -132,7 +132,7 @@ export default {
     },
     backClick() {
       // this.$refs.scroll.scroll.scrollTo(0, 0, 500)
-      this.$refs.scroll.scrollTo()
+      this.$refs.scroll.scrollTo(0, 0, 500)
     },
     contentScroll(position) {
       //1.BackTop是否显示

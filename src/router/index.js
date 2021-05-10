@@ -26,7 +26,7 @@ const routes = [
     component: () => import('views/profile/Profile')
   },
   {
-    path: '/detail',
+    path: '/detail/:iid',  //动态路由
     component: () => import('views/detail/Detail')
   },
 ]
