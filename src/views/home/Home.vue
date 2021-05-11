@@ -43,6 +43,7 @@ import BackTop from "@/components/content/backTop/BackTop";
 
 import {getHomeMultidata, getHomeGoods} from "network/home";
 import {debounce} from "@/common/utils";
+import {itemListenerMixin} from "@/common/mixin";
 
 export default {
   name: "Home",
@@ -57,6 +58,7 @@ export default {
     Scroll,
     BackTop
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       banners: [],
@@ -71,6 +73,7 @@ export default {
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
+      // itemImgListener: null,
     }
   },
   computed: {
@@ -85,8 +88,12 @@ export default {
     this.$refs.scroll.refresh()
     this.$refs.scroll.scrollTo(0, this.saveY, 0)
   },
-  deactivated() { //离开组件时，记录位置
+  deactivated() {
+    //1.离开组件时，记录位置
     this.saveY = this.$refs.scroll.getScrollY()
+
+    //2.取消对全局事件的监听
+    this.$bus.$off('itemImageLoad', this.itemImgListener)
   },
 
   //组件创建好了，就赶紧发送网络请求
@@ -99,15 +106,15 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
-  mounted() {
+  mounted() {//重复代码 --->>>使用混入
+    //这个地方img标签确实被挂载，但是图片还没占据高度
     //防抖 refresh调用太频繁(将refresh函数传入到debounce函数中，生成一个新的函数)
-    const refresh = debounce(this.$refs.scroll.refresh, 500)
+    // const refresh = debounce(this.$refs.scroll.refresh, 100)
+
     //1.监听item中图片加载完成
-    this.$bus.$on('itemImageLoad', () => {
-      refresh()
-    })
-
-
+    //对监听的事件进行保存(是为了在离开组件时候 取消对图片加载完成的监听)
+    // this.itemImgListener = () => {refresh()}
+    // this.$bus.$on('itemImageLoad', this.itemImgListener)
   },
   methods: {
     /**
