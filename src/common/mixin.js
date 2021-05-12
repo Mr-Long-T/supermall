@@ -19,3 +19,20 @@ export const itemListenerMixin = {
     // console.log('我是混入里面的内容');
   }
 }
+
+import BackTop from "@/components/content/backTop/BackTop";
+export const backTopMixIn = {
+  components: {
+    BackTop
+  },
+  data() {
+    return {
+      isShowBackTop: false
+    }
+  },
+  methods: {
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0, 500)
+    }
+  }
+}

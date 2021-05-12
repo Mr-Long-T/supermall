@@ -13,6 +13,8 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommends" :goods="recommends"/>
     </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
+    <detail-bottom-bar @addToCart="addToCart"/>
   </div>
 </template>
 
@@ -24,13 +26,14 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
-import GoodsList from "@/components/content/goods/GoodsList";
+import DetailBottomBar from "@/views/detail/childComps/DetailBottomBar";
 
 import Scroll from "@/components/common/scroll/Scroll";
+import GoodsList from "@/components/content/goods/GoodsList";
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "@/network/detail";
 import {debounce} from "@/common/utils";
-import {itemListenerMixin} from "@/common/mixin";
+import {itemListenerMixin, backTopMixIn} from "@/common/mixin";
 
 export default {
   name: "Detail",
@@ -49,7 +52,7 @@ export default {
       currentIndex: 0,
     }
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixIn],
   components: {
     DetailNavBar,
     DetailSwiper,
@@ -59,7 +62,55 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
-    GoodsList
+    GoodsList,
+    DetailBottomBar
+  },
+  methods: {
+    imageLoad() {
+      this.$refs.scroll.refresh()
+
+      //调用太频繁，需要防抖
+      // this.themeTopYs = []
+      // this.themeTopYs.push(0);
+      // this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44)
+      // this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44)
+      // this.themeTopYs.push(this.$refs.recommends.$el.offsetTop - 44)
+      this.getThemeTopYs()
+    },
+    titleClick(index) {
+      // console.log(index);
+      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index])
+    },
+    scrPosition(position) {
+      //根据滚动位置,赋值currentIndex
+      const positionY = -position.y
+
+      let length = this.themeTopYs.length
+      for (let i = 0; i < length; i++) {
+        if (this.currentIndex !== i
+          && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1])
+            || (i === length - 1 && positionY >= this.themeTopYs[i]))) {
+          this.currentIndex = i
+          this.$refs.detailNav.currentIndex = this.currentIndex
+        }
+      }
+
+      //BackTop是否显示
+      this.isShowBackTop = (-position.y) > 700
+    },
+    addToCart(){
+      //1.获取购物车需要展示的信息
+      const product = {}
+      product.image = this.topImages[0]
+      product.title = this.goods.title
+      product.desc = this.goods.desc
+      product.price = this.goods.realPrice
+      product.iid = this.iid
+
+      //将商品添加到购物车里面
+      // this.$store.commit('addCart', product)
+      this.$store.dispatch('addCart', product) //Actions
+    }
   },
   created() {
     //1.保存传入的iid
@@ -115,37 +166,6 @@ export default {
       // console.log(this.themeTopYs);
     })
   },
-  methods: {
-    imageLoad() {
-      this.$refs.scroll.refresh()
-
-      //调用太频繁，需要防抖
-      // this.themeTopYs = []
-      // this.themeTopYs.push(0);
-      // this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44)
-      // this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44)
-      // this.themeTopYs.push(this.$refs.recommends.$el.offsetTop - 44)
-      this.getThemeTopYs()
-    },
-    titleClick(index) {
-      // console.log(index);
-      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index])
-    },
-    scrPosition(position) {
-      const positionY = -position.y
-
-      let length = this.themeTopYs.length
-      for (let i = 0; i < length; i++) {
-        if (this.currentIndex !== i
-          && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1])
-            || (i === length - 1 && positionY >= this.themeTopYs[i]))) {
-          this.currentIndex = i
-          this.$refs.detailNav.currentIndex = this.currentIndex
-        }
-      }
-    },
-
-  },
   mounted() {
   },
   updated() { //会多次更新 取出offsetTop的值依然不对
@@ -179,7 +199,7 @@ export default {
 }
 
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 102px);
   overflow: hidden;
 }
 </style>
