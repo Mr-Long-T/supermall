@@ -92,8 +92,8 @@ export default {
     //1.离开组件时，记录位置
     this.saveY = this.$refs.scroll.getScrollY()
 
-    //2.取消对全局事件的监听
-    this.$bus.$off('itemImageLoad', this.itemImgListener)
+    //2.取消对全局事件的监听(后面封装在混入里)
+    // this.$bus.$off('itemImageLoad', this.itemImgListener)
   },
 
   //组件创建好了，就赶紧发送网络请求
@@ -150,6 +150,7 @@ export default {
     },
     loadMore() {
       this.getHomeGoods(this.currentType)
+      // this.$refs.scroll.refresh()
     },
     swiperImageLoad(){
       //.获取tabControl2的offsetTop

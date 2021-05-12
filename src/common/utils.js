@@ -1,5 +1,6 @@
 export function debounce(fun, delay){
   let timer = null
+  console.log('debounce生效');
   return function (...args) {
     if (timer) clearTimeout(timer)
     timer = setTimeout(() => {

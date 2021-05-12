@@ -1,6 +1,6 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick"/>
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="detailNav"/>
     <scroll class="content"
             ref="scroll"
             :probe-type="3"
@@ -46,6 +46,7 @@ export default {
       recommends: [],
       themeTopYs: [],
       getThemeTopYs: null,
+      currentIndex: 0,
     }
   },
   mixins: [itemListenerMixin],
@@ -127,12 +128,23 @@ export default {
       this.getThemeTopYs()
     },
     titleClick(index) {
-      console.log(index);
+      // console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index])
     },
-    scrPosition(position){
+    scrPosition(position) {
+      const positionY = -position.y
 
-    }
+      let length = this.themeTopYs.length
+      for (let i = 0; i < length; i++) {
+        if (this.currentIndex !== i
+          && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1])
+            || (i === length - 1 && positionY >= this.themeTopYs[i]))) {
+          this.currentIndex = i
+          this.$refs.detailNav.currentIndex = this.currentIndex
+        }
+      }
+    },
+
   },
   mounted() {
   },
@@ -170,5 +182,4 @@ export default {
   height: calc(100% - 44px);
   overflow: hidden;
 }
-
 </style>

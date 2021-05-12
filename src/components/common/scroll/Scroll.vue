@@ -58,6 +58,7 @@ export default {
     },
     refresh(){
       this.scroll.refresh()
+      console.log("Scroll-refresh");
     },
     getScrollY(){
       return this.scroll ? this.scroll.y : 0
