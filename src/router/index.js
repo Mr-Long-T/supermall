@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: '/shopcart',
-    component: () => import('views/shopcart/Shopcart')
+    component: () => import('views/shopcart/ShopCart')
   },
   {
     path: '/profile',

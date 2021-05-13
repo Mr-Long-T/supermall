@@ -7,7 +7,7 @@ export default {
   [ADD_COUNT](state, payload){
     payload.count++
   },
-  [ADD_COUNT](state, payload){
+  [ADD_TO_CART](state, payload){
     state.cartList.push(payload)
   }
 }

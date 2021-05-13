@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import mutations from "@/store/mutations";
 import actions from "@/store/actions";
+import getters from "@/store/getters";
 
 //1.使用插件
 Vue.use(Vuex)
@@ -17,6 +18,7 @@ const store = new Vuex.Store({
   mutations,  //mutations唯一的目的就是修改state中状态
   //mutations中的每个方法尽可能完成的事件比较单一 （此处做了count=+1 或count=1）
   actions,
+  getters,
 })
 
 //3.挂载Vue实例上
