@@ -34,6 +34,7 @@ import GoodsList from "@/components/content/goods/GoodsList";
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "@/network/detail";
 import {debounce} from "@/common/utils";
 import {itemListenerMixin, backTopMixIn} from "@/common/mixin";
+import {mapActions} from 'vuex'
 
 export default {
   name: "Detail",
@@ -63,9 +64,10 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     GoodsList,
-    DetailBottomBar
+    DetailBottomBar,
   },
   methods: {
+    ...mapActions(['addCart']),
     imageLoad() {
       this.$refs.scroll.refresh()
 
@@ -98,7 +100,7 @@ export default {
       //BackTop是否显示
       this.isShowBackTop = (-position.y) > 700
     },
-    addToCart(){
+    addToCart() {
       //1.获取购物车需要展示的信息
       const product = {}
       product.image = this.topImages[0]
@@ -107,9 +109,18 @@ export default {
       product.price = this.goods.realPrice
       product.iid = this.iid
 
-      //将商品添加到购物车里面
+      //将商品添加到购物车里面(1.Promise 2.mapActions)
+      // 1.
       // this.$store.commit('addCart', product)
-      this.$store.dispatch('addCart', product) //Actions
+      // 2.
+      // this.$store.dispatch('addCart', product).then(res => {
+      //   console.log(res);
+      // })
+      // 3.将方法映射到mapActions里面
+      this.addCart(product).then(res => {
+        // console.log(res);
+        this.$toast.show(res)
+      })
     }
   },
   created() {

@@ -36,13 +36,13 @@ export default {
     CheckButton
   },
   computed: {
-    ...mapGetters(['cartList']),
+    ...mapGetters(['cartList'], ),
     //1、计算总价
     totalPrice() {
       return this.cartList.filter((item) => {
         return item.checked;
       }).reduce((preValue, item) => {
-        return preValue + item.realPrice * item.count;
+        return preValue + item.price * item.count;
       }, 0).toFixed(2)
     },
     //2、计算选中个数
@@ -59,10 +59,10 @@ export default {
       if(this.cartList.length === 0) {
         return false;
       }
-      //1、使用filter
-      //return !(this.cartList.filter(item => item.checked).length);
-      //2、使用find
-      // return !this.cartList.find(item => item.checked);
+      //1、使用filter(查找没有选中的,返回false )
+      //return !(this.cartList.filter(item => !item.checked).length);
+      //2、使用find（只要查找到，就返回）
+      // return !this.cartList.find(item => !item.checked);
       //3、普通遍历
       // for(let item of this.cartList) {
       //   if(!item.checked) {
@@ -77,23 +77,12 @@ export default {
     ...mapMutations(["deleteProduct"]),
     //1、全选按钮
     checkAllClick() {
-      //console.log('checkall');
-      //计算属性isCheckAll为true表示当前为全部选中状态，点击全选那就全部不选中
-      // if(this.isCheckAll) {
-      //   this.cartList.map(item => {
-      //     //修改store里面的数据一定要经过mutations，否则调试插件监控不到
-      //     this.$store.commit('updateChecked', {item, checked: false});
-      //   })
-      // }else {
-      //   this.cartList.map(item => {
-      //     this.$store.commit("updateChecked", {item, checked: true});
-      //   })
-      // }
       if(this.isCheckAll) { //全部选中
         this.cartList.forEach(item => item.checked = false);
-      }else { // 部分或钻都不选中
+      }else { // 部分或都不选中
         this.cartList.forEach(item => item.checked = true);
       }
+
     },
     //2、点击计算按钮
     calculateClick() {
@@ -111,12 +100,10 @@ export default {
 <style scoped>
 #bottom-bar {
   height: 40px;
-  position: fixed;
+  position: relative;
   display: flex;
-  bottom: 49px;
-  left: 0;
-  right: 0;
-  /*background-color: #eee;*/
+
+  background-color: #eee;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
 }
 #bottom-bar .check-content {
@@ -130,7 +117,7 @@ export default {
 #bottom-bar .check-content .check-btn {
   /*width: 20px;*/
   /*height: 20px;*/
-  /*margin-right: 5px;*/
+  margin-right: 5px;
   line-height: 20px;
   display: flex;
   /*flex: 1;*/
@@ -139,12 +126,13 @@ export default {
   align-items: center;
 }
 .price {
-  text-align: center;
+  text-align: right;
   flex: 2;
   /*height: 40px;*/
   line-height: 40px;
 }
 .price span {
+  margin-right: 10px;
   color: var(--color-tint);
 }
 .calculate {

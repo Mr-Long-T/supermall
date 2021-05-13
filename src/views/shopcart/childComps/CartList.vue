@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import cartListItem from "@/views/shopcart/childComps/CartListItem";
+import CartListItem from "@/views/shopcart/childComps/CartListItem";
 import Scroll from "@/components/common/scroll/Scroll";
 
 import {mapGetters} from 'vuex'
@@ -18,7 +18,7 @@ export default {
   name: "CartList",
   components: {
     Scroll,
-    cartListItem,
+    CartListItem,
   },
   computed: {
     ...mapGetters(['cartList'])
@@ -31,7 +31,7 @@ export default {
 
 <style scoped>
 .cart-list {
-  height: calc(100% - 44px)
+  height: calc(100% - 44px - 89px )
 }
 .content {
   height: 100%;

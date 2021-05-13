@@ -52,7 +52,6 @@ export default {
 }
 
 .item-selector {
-  width: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
